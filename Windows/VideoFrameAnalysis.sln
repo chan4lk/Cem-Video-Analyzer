@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveCameraSample", "LiveCameraSample\LiveCameraSample.csproj", "{5B40977E-E8FA-41BC-8F0A-6D6FDE237571}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicConsoleSample", "BasicConsoleSample\BasicConsoleSample.csproj", "{0638DEF8-9613-4599-9335-7A2438B447DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotClient", "BotClient\BotClient.csproj", "{3B69C3F6-0429-4270-A57C-A0C62618156D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFaceRecognition", "AzureFaceRecognition\AzureFaceRecognition.csproj", "{A2D4DDAA-CE4B-4210-943D-C587F55B2431}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,14 @@ Global
 		{3B69C3F6-0429-4270-A57C-A0C62618156D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B69C3F6-0429-4270-A57C-A0C62618156D}.Release|x86.ActiveCfg = Release|x86
 		{3B69C3F6-0429-4270-A57C-A0C62618156D}.Release|x86.Build.0 = Release|x86
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Debug|x86.Build.0 = Debug|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2D4DDAA-CE4B-4210-943D-C587F55B2431}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

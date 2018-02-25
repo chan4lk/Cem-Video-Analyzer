@@ -21,7 +21,8 @@
             <ComboBox x:Name="ModeList" Width="100" Margin="5,5,0,5" Loaded="ModeList_Loaded" SelectionChanged="ModeList_SelectionChanged" />
         </StackPanel>
         <Button Content="Show/Hide Settings" Padding="5,0" Margin="5" Click="SettingsButton_Click" HorizontalAlignment="Right" />
-        <Button Content="Chat" Padding="5,0" Margin="0,5,132.4,5.2" Click="ChatButton_Click" HorizontalAlignment="Right" />
+        <Button Content="Reset" Padding="5,0" Margin="0,5,238.4,5.2" Click="ResetButton_Click" HorizontalAlignment="Right" />
+        <Button Content="Chat" Padding="5,0" Margin="0,5,134.4,5.2" Click="ChatButton_Click" HorizontalAlignment="Right" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

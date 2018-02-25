@@ -135,14 +135,10 @@ namespace LiveCameraSample.Bot
                         e.PhraseResponse.Results[i].Confidence,
                         e.PhraseResponse.Results[i].DisplayText);
 
-
-                    if (e.PhraseResponse.Results[i].Confidence == Confidence.High)
-                    {
-                        var text = e.PhraseResponse.Results[i].DisplayText.Replace(".", "");
-                        Send(text);                        
-                    }
                 }
 
+                var firstGuess = e.PhraseResponse.Results.FirstOrDefault().DisplayText.Replace(".", "");
+                Send(firstGuess);
                 this.WriteLine("\n");
             }
         }
@@ -237,6 +233,13 @@ namespace LiveCameraSample.Bot
             {
                 voice.SpeakAsync(text);
             }
+        }
+
+        public void Reset()
+        {
+            this.micClient.StartMicAndRecognition();
+            this.client.Conversations.
+            this.StartBotConversation();
         }
 
         #endregion

@@ -64,7 +64,7 @@ namespace LiveCameraSample
     {
         private EmotionServiceClient _emotionClient = null;
         private FaceServiceClient _faceClient = null;
-        SpeechSynthesizer voice = new SpeechSynthesizer();
+        //SpeechSynthesizer voice = new SpeechSynthesizer();
         string _groupId = "";
         private VisionServiceClient _visionClient = null;
         private readonly FrameGrabber<LiveCameraResult> _grabber = null;
@@ -114,15 +114,25 @@ namespace LiveCameraSample
                 // MainWindow.Dispatcher when manipulating the UI. 
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    // Display the image in the left pane.
-                    LeftImage.Source = e.Frame.Image.ToBitmapSource();
-
-                    // If we're fusing client-side face detection with remote analysis, show the
-                    // new frame now with the most recent analysis available. 
-                    if (_fuseClientRemoteResults)
+                    try
                     {
-                        RightImage.Source = VisualizeResult(e.Frame);
+                        // Display the image in the left pane.
+                        LeftImage.Source = e.Frame.Image.ToBitmapSource();
+
+                        // If we're fusing client-side face detection with remote analysis, show the
+                        // new frame now with the most recent analysis available. 
+                        if (_fuseClientRemoteResults)
+                        {
+                            RightImage.Source = VisualizeResult(e.Frame);
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        // 
+                        BotClient_OnResponse(ex.Message, MessageType.Metadata);
+                        //throw;
+                    }
+                    
                 }));
 
                 // See if auto-stop should be triggered. 
@@ -262,13 +272,14 @@ namespace LiveCameraSample
                     //}
 
                     //idList.Items.Add(person.Name);
-                    voice.SpeakAsync(string.Format("Hello {0}, how are you doing?", person.Name));
+                    //voice.SpeakAsync(string.Format("Hello {0}, how are you doing?", person.Name));
                     botClient.Send(person.Name);
                 }
                 else
                 {
                     //idList.Items.Add("< Unknown person >");
-                    voice.SpeakAsync("Seems there is an unknown person.");
+                    //voice.SpeakAsync("Seems there is an unknown person.");
+                    botClient.Send("Unknown");
                 }
             }
             //End Windana
@@ -513,13 +524,14 @@ namespace LiveCameraSample
                 try
                 {
                     await _faceClient.DeletePersonGroupAsync(_groupId);
+                    await _faceClient.CreatePersonGroupAsync(_groupId, _groupId);
                 }
                 catch (Exception ex)
                 {
-
+                    BotClient_OnResponse(ex.Message, MessageType.Metadata);
                 }
 
-                await _faceClient.CreatePersonGroupAsync(_groupId, _groupId);
+                
             }
 
             //End Windana
@@ -628,6 +640,11 @@ namespace LiveCameraSample
         private void ChatButton_Click(object sender, RoutedEventArgs e)
         {
             BotPanel.Visibility = 1 - BotPanel.Visibility;
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            botClient.Reset();
         }
     }
 }
