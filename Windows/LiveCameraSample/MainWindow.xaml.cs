@@ -350,7 +350,10 @@ namespace LiveCameraSample
             }
 
             var comboBox = sender as ComboBox;
-            comboBox.ItemsSource = Enumerable.Range(0, numCameras).Select(i => string.Format("Camera {0}", i + 1));
+            var cams = Enumerable.Range(0, numCameras).Select(i => string.Format("Camera {0}", i + 1)).ToList();
+            cams.Add("IP Cam");
+            var source = cams.AsEnumerable();
+            comboBox.ItemsSource = source;
             comboBox.SelectedIndex = 0;
         }
 
@@ -417,7 +420,7 @@ namespace LiveCameraSample
             _faceClient = new FaceServiceClient(Properties.Settings.Default.FaceAPIKey, Properties.Settings.Default.FaceAPIHost);
             //_faceClient = new FaceServiceClient("5d017c9a97c745c6a1e45c2a8edaec95", "https://southcentralus.api.cognitive.microsoft.com/face/v1.0");
 
-        _emotionClient = new EmotionServiceClient(Properties.Settings.Default.EmotionAPIKey, Properties.Settings.Default.EmotionAPIHost);
+            _emotionClient = new EmotionServiceClient(Properties.Settings.Default.EmotionAPIKey, Properties.Settings.Default.EmotionAPIHost);
             _visionClient = new VisionServiceClient(Properties.Settings.Default.VisionAPIKey, Properties.Settings.Default.VisionAPIHost);
 
             // How often to analyze. 
@@ -429,7 +432,16 @@ namespace LiveCameraSample
             // Record start time, for auto-stop
             _startTime = DateTime.Now;
 
-            await _grabber.StartProcessingCameraAsync(CameraList.SelectedIndex);
+            // Process IP Cam
+            if(CameraList.SelectedIndex == CameraList.Items.Count - 1)
+            {
+                await _grabber.StartProcessingCameraAsync(-1, Properties.Settings.Default.IPCamURL);
+            }
+            else
+            {
+                await _grabber.StartProcessingCameraAsync(CameraList.SelectedIndex);
+            }
+            
 
             //Windana
 

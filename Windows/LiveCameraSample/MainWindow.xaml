@@ -49,10 +49,8 @@
                     <TextBox   Margin="5" Grid.Row="0" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.FaceAPIKey, Mode=TwoWay}" />
                     <TextBlock Margin="5" Grid.Row="1" Grid.Column="0" Text="Face API Host:" />
                     <TextBox   Margin="5" Grid.Row="1" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.FaceAPIHost, Mode=TwoWay}" />
-                    <TextBlock Margin="5" Grid.Row="2" Grid.Column="0" Text="Emotion API Key:" />
-                    <TextBox   Margin="5" Grid.Row="2" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.EmotionAPIKey, Mode=TwoWay}" />
-                    <TextBlock Margin="5" Grid.Row="3" Grid.Column="0" Text="Emotion API Host:" />
-                    <TextBox   Margin="5" Grid.Row="3" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.EmotionAPIHost, Mode=TwoWay}" />
+                    <TextBlock Margin="5" Grid.Row="2" Grid.Column="0" Text="IP Cam URL:" />
+                    <TextBox   Margin="5" Grid.Row="2" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.IPCamURL, Mode=TwoWay}" />
                     <TextBlock Margin="5" Grid.Row="4" Grid.Column="0" Text="Vision API Key:" />
                     <TextBox   Margin="5" Grid.Row="4" Grid.Column="1" Text="{Binding Source={StaticResource Settings}, Path=Default.VisionAPIKey, Mode=TwoWay}" />
                     <TextBlock Margin="5" Grid.Row="5" Grid.Column="0" Text="Vision API Host:" />

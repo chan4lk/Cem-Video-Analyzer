@@ -137,6 +137,7 @@ namespace VideoFrameAnalyzer
         protected bool _resetTrigger = true;
         protected int _numCameras = -1;
         protected int _currCameraIdx = -1;
+        protected string _currIPCamUrl = string.Empty;
         protected double _fps = 0;
 
         #endregion Fields
@@ -159,8 +160,15 @@ namespace VideoFrameAnalyzer
         /// <summary> Starts processing frames from a live camera. Stops any current video source
         ///     before starting the new source. </summary>
         /// <returns> A Task. </returns>
-        public async Task StartProcessingCameraAsync(int cameraIndex = 0, double overrideFPS = 0)
+        public async Task StartProcessingCameraAsync(int cameraIndex = 0, string ipCameraUrl = "", double overrideFPS = 0)
         {
+            if (!string.IsNullOrEmpty(ipCameraUrl) 
+                && _reader != null && _reader.CaptureType == CaptureType.Camera 
+                && ipCameraUrl == _currIPCamUrl)
+            {
+                return;
+            }
+
             // Check to see if we're re-opening the same camera. 
             if (_reader != null && _reader.CaptureType == CaptureType.Camera && cameraIndex == _currCameraIdx)
             {
@@ -169,7 +177,16 @@ namespace VideoFrameAnalyzer
 
             await StopProcessingAsync().ConfigureAwait(false);
 
-            _reader = new VideoCapture(cameraIndex);
+            if (!string.IsNullOrEmpty(ipCameraUrl))
+            {
+                _reader = new VideoCapture(ipCameraUrl);
+            }
+            else
+            {
+                _reader = new VideoCapture(cameraIndex);
+            }
+            //_reader = new VideoCapture(cameraIndex);
+            
 
             _fps = overrideFPS;
 
@@ -181,7 +198,7 @@ namespace VideoFrameAnalyzer
             Width = _reader.FrameWidth;
             Height = _reader.FrameHeight;
 
-            StartProcessing(TimeSpan.FromSeconds(1 / _fps), () => DateTime.Now);
+            StartProcessing(TimeSpan.FromSeconds(10 / _fps), () => DateTime.Now);
 
             _currCameraIdx = cameraIndex;
         }
