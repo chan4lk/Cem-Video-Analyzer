@@ -54,6 +54,7 @@ using System.Speech.Synthesis;
 using LiveCameraSample.Bot;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using LiveCameraSample.Controller;
 
 namespace LiveCameraSample
 {
@@ -72,7 +73,7 @@ namespace LiveCameraSample
             new ImageEncodingParam(ImwriteFlags.JpegQuality, 60)
         };
         private readonly CascadeClassifier _localFaceDetector = new CascadeClassifier();
-        private readonly string requestName = "What is your name?";
+        private readonly string requestName = "Hi, I'm the CEM bot. Let's get started";
         private bool _fuseClientRemoteResults;
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
@@ -133,7 +134,7 @@ namespace LiveCameraSample
                         BotClient_OnResponse(ex.Message, MessageType.Metadata);
                         //throw;
                     }
-                    
+
                 }));
 
                 // See if auto-stop should be triggered. 
@@ -217,7 +218,7 @@ namespace LiveCameraSample
                 case MessageType.History:
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        if(message.Contains(requestName))
+                        if (message.Contains(requestName))
                         {
                             StartButton_Click(this, new RoutedEventArgs());
                         }
@@ -231,16 +232,14 @@ namespace LiveCameraSample
                         MetaText.AppendText(message + "\n");
                         MetaText.ScrollToEnd();
                     }));
-                    
+
                     break;
                 default:
                     break;
             }
         }
 
-        
-
-            private void BotClient_OnError(object sender, EventArgs e)
+        private void BotClient_OnError(object sender, EventArgs e)
         {
             MetaText.AppendText((e as UnhandledExceptionEventArgs).ExceptionObject.ToString());
         }
@@ -269,9 +268,10 @@ namespace LiveCameraSample
                     var candidateId = identifyResult.Candidates[0].PersonId;
                     var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
                     botClient.Send(person.Name);
+                    HandController.Shake(Properties.Settings.Default.IPCamURL);
                 }
                 else
-                {                
+                {
                     botClient.Send("Unknown");
                 }
                 botClient.UserRecognized = true;
@@ -497,7 +497,7 @@ namespace LiveCameraSample
             _startTime = DateTime.Now;
 
             // Process IP Cam
-            if(CameraList.SelectedIndex == CameraList.Items.Count - 1)
+            if (CameraList.SelectedIndex == CameraList.Items.Count - 1)
             {
                 await _grabber.StartProcessingCameraAsync(-1, Properties.Settings.Default.IPCamURL);
             }
@@ -505,7 +505,7 @@ namespace LiveCameraSample
             {
                 await _grabber.StartProcessingCameraAsync(CameraList.SelectedIndex);
             }
-            
+
 
             //Windana
 
@@ -526,7 +526,7 @@ namespace LiveCameraSample
                     BotClient_OnResponse(ex.Message, MessageType.Metadata);
                 }
 
-                
+
             }
 
             //End Windana
@@ -624,11 +624,11 @@ namespace LiveCameraSample
 
         private void SendText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == System.Windows.Input.Key.Enter)
+            if (e.Key == System.Windows.Input.Key.Enter)
             {
                 botClient.Send(SendText.Text);
                 SendText.Text = "";
-                
+
             }
         }
 

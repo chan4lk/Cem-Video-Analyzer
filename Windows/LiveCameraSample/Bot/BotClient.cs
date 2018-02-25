@@ -42,6 +42,11 @@ namespace LiveCameraSample.Bot
 
         public BotClient()
         {
+            this.initialize();
+        }
+
+        private void initialize()
+        {
             SetupVoice();
             SetupMicrophone();
             StartBotConversation();
@@ -204,6 +209,16 @@ namespace LiveCameraSample.Bot
             }
         }
 
+        private async void SendResetActivity()
+        {
+            Activity activity = new Activity
+            {
+                Type = ActivityTypes.EndOfConversation
+            };
+
+            await client.Conversations.PostActivityAsync(conversation.ConversationId, activity);
+        }
+
         private async Task ReadBotMessagesAsync(DirectLineClient client, string conversationId)
         {
             string watermark = null;
@@ -239,11 +254,13 @@ namespace LiveCameraSample.Bot
             }
         }
 
-        public void Reset()
+        public async void Reset()
         {
-            this.micClient.EndMicAndRecognition();
-            this.micClient.StartMicAndRecognition();
-            this.StartBotConversation();
+            SendResetActivity();
+            this.client.Dispose();
+            this.micClient.Dispose();
+            
+            this.initialize();
         }
 
         #endregion

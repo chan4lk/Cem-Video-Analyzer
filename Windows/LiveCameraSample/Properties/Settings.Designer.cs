@@ -178,7 +178,7 @@ namespace LiveCameraSample.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://192.168.8.100:8080/video")]
+        [global::System.Configuration.DefaultSettingValueAttribute("169.254.172.112")]
         public string IPCamURL {
             get {
                 return ((string)(this["IPCamURL"]));

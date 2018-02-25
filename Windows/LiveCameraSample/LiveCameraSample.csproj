@@ -117,6 +117,7 @@
     <Compile Include="Bot\BotClient.cs" />
     <Compile Include="Bot\MessageType.cs" />
     <Compile Include="CelebritiesResult.cs" />
+    <Compile Include="Controller\HandController.cs" />
     <Compile Include="LiveCameraResult.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Visualization.cs" />

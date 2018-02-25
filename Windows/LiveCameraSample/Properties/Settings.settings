@@ -42,7 +42,7 @@
       <Value Profile="(Default)">https://westus.api.cognitive.microsoft.com/vision/v1.0</Value>
     </Setting>
     <Setting Name="IPCamURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://192.168.8.100:8080/video</Value>
+      <Value Profile="(Default)">169.254.172.112</Value>
     </Setting>
     <Setting Name="AuthURL" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.cognitive.microsoft.com/sts/v1.0/issueToken</Value>
