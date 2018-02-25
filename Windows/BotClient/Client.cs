@@ -28,8 +28,8 @@ namespace BotClient
         private Microsoft.Bot.Connector.DirectLine.Conversation conversation;
         private SpeechSynthesizer voice;
         private MicrophoneRecognitionClient micClient;
-        private SpeechRecognitionMode Mode = SpeechRecognitionMode.ShortPhrase;        
-        
+        private SpeechRecognitionMode Mode = SpeechRecognitionMode.ShortPhrase;
+
 
         public Client()
         {
@@ -46,7 +46,7 @@ namespace BotClient
             {
                 CreateMicrophoneRecoClient();
                 this.micClient.StartMicAndRecognition();
-                MessageBox.Show("Hi");
+                //MessageBox.Show("Hi");
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace BotClient
 
                 this.WriteResponseResult(e);
             }));
-            }
+        }
 
         private void OnMicrophoneStatus(object sender, MicrophoneEventArgs e)
         {
@@ -124,13 +124,13 @@ namespace BotClient
                 for (int i = 0; i < e.PhraseResponse.Results.Length; i++)
                 {
                     this.WriteLine(
-                        "[{0}] Confidence={1}, Text=\"{2}\"", 
-                        i, 
+                        "[{0}] Confidence={1}, Text=\"{2}\"",
+                        i,
                         e.PhraseResponse.Results[i].Confidence,
                         e.PhraseResponse.Results[i].DisplayText);
 
-                        
-                    if(e.PhraseResponse.Results[i].Confidence == Confidence.High)
+
+                    if (e.PhraseResponse.Results[i].Confidence == Confidence.High)
                     {
                         sendText.Text = e.PhraseResponse.Results[i].DisplayText.Replace(".", ""); ;
                         sendButton_Click(this, new EventArgs());
@@ -175,7 +175,7 @@ namespace BotClient
         }
 
         private void Voice_SpeakStarted(object sender, SpeakStartedEventArgs e)
-        {            
+        {
             this.micClient.EndMicAndRecognition();
         }
 
@@ -259,7 +259,7 @@ namespace BotClient
             {
                 //sink this
             }
-           
+
 
             // Read Text
             if (txt.Name == chatHistoryText.Name)
@@ -283,7 +283,7 @@ namespace BotClient
                 SetText(chatHistoryText, string.Format("*{0}*", contentLine(heroCard.Text)));
                 SetText(chatHistoryText, string.Format("{0}/", new string('*', Width + 1)));
             }
-        } 
+        }
         #endregion
 
         #region Event Handlers
@@ -302,8 +302,30 @@ namespace BotClient
             }
         }
 
+
         #endregion
 
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
+        }
 
+        private void Client_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (System.Windows.Forms.Application.MessageLoop)
+            {
+                this.micClient.EndMicAndRecognition();
+                this.micClient = null;
+                this.voice = null;
+                // Use this since we are a WinForms app
+                System.Windows.Forms.Application.Exit();
+                System.Environment.Exit(1);
+            }
+            else
+            {
+                // Use this since we are a console app
+                System.Environment.Exit(1);
+            }
+        }
     }
 }

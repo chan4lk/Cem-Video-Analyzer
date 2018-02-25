@@ -44,5 +44,11 @@
     <Setting Name="IPCamURL" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://192.168.8.100:8080/video</Value>
     </Setting>
+    <Setting Name="AuthURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.cognitive.microsoft.com/sts/v1.0/issueToken</Value>
+    </Setting>
+    <Setting Name="SpeechKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

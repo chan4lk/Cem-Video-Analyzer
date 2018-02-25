@@ -187,5 +187,29 @@ namespace LiveCameraSample.Properties {
                 this["IPCamURL"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.cognitive.microsoft.com/sts/v1.0/issueToken")]
+        public string AuthURL {
+            get {
+                return ((string)(this["AuthURL"]));
+            }
+            set {
+                this["AuthURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SpeechKey {
+            get {
+                return ((string)(this["SpeechKey"]));
+            }
+            set {
+                this["SpeechKey"] = value;
+            }
+        }
     }
 }
