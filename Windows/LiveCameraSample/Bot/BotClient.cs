@@ -228,7 +228,7 @@ namespace LiveCameraSample.Bot
             }
         }
 
-        public void SetText(MessageType type, string text)
+        private void SetText(MessageType type, string text)
         {
             OnResponse?.Invoke(text, type);
 

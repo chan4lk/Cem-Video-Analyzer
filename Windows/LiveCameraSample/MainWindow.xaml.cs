@@ -263,6 +263,7 @@ namespace LiveCameraSample
 
                     //idList.Items.Add(person.Name);
                     voice.SpeakAsync(string.Format("Hello {0}, how are you doing?", person.Name));
+                    botClient.Send(person.Name);
                 }
                 else
                 {
