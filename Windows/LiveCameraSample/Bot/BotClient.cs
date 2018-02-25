@@ -36,11 +36,12 @@ namespace LiveCameraSample.Bot
         public delegate void OnInitialized();
         public event OnInitialized OnInit;
 
-        public event EventHandler OnError;
+        public event EventHandler OnError;        
 
+        public bool UserRecognized { get; set; }
 
         public BotClient()
-        {            
+        {
             SetupVoice();
             SetupMicrophone();
             StartBotConversation();
@@ -52,7 +53,7 @@ namespace LiveCameraSample.Bot
             try
             {
                 CreateMicrophoneRecoClient();
-                this.micClient.StartMicAndRecognition();
+                //this.micClient.StartMicAndRecognition();
                 //MessageBox.Show("Hi");
             }
             catch (Exception ex)
@@ -103,7 +104,7 @@ namespace LiveCameraSample.Bot
             // for dataReco, since we already called endAudio() on it as soon as we were done
             // sending all the data.
             this.micClient.EndMicAndRecognition();
-            
+
             this.WriteResponseResult(e);
 
         }
@@ -184,7 +185,8 @@ namespace LiveCameraSample.Bot
 
         private void Voice_SpeakCompleted(object sender, SpeakCompletedEventArgs e)
         {
-            this.micClient.StartMicAndRecognition();
+            if (UserRecognized)
+                this.micClient.StartMicAndRecognition();
         }
 
         public async void Send(string input)

@@ -268,25 +268,13 @@ namespace LiveCameraSample
                 {
                     var candidateId = identifyResult.Candidates[0].PersonId;
                     var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
-
-                    // Writes name above face rectangle
-                    //var x = faces.FirstOrDefault(y => y.FaceId == identifyResult.FaceId);
-                    //if (x != null)
-                    //{
-                    //    g.DrawString(person.Name, this.Font, Brushes.White, x.FaceRectangle.Left, x.FaceRectangle.Top + x.FaceRectangle.Height + 15);
-                    //}
-
-                    //idList.Items.Add(person.Name);
-                    //voice.SpeakAsync(string.Format("Hello {0}, how are you doing?", person.Name));
                     botClient.Send(person.Name);
-                    
                 }
                 else
-                {
-                    //idList.Items.Add("< Unknown person >");
-                    //voice.SpeakAsync("Seems there is an unknown person.");
+                {                
                     botClient.Send("Unknown");
                 }
+                botClient.UserRecognized = true;
             }
             StopButton_Click(this, new RoutedEventArgs());
             //End Windana
