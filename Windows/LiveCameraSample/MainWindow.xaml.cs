@@ -72,6 +72,7 @@ namespace LiveCameraSample
             new ImageEncodingParam(ImwriteFlags.JpegQuality, 60)
         };
         private readonly CascadeClassifier _localFaceDetector = new CascadeClassifier();
+        private readonly string requestName = "What is your name?";
         private bool _fuseClientRemoteResults;
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
@@ -216,6 +217,10 @@ namespace LiveCameraSample
                 case MessageType.History:
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
+                        if(message.Contains(requestName))
+                        {
+                            StartButton_Click(this, new RoutedEventArgs());
+                        }
                         HistoryText.AppendText(message + "\n");
                         HistoryText.ScrollToEnd();
                     }));
@@ -274,6 +279,7 @@ namespace LiveCameraSample
                     //idList.Items.Add(person.Name);
                     //voice.SpeakAsync(string.Format("Hello {0}, how are you doing?", person.Name));
                     botClient.Send(person.Name);
+                    
                 }
                 else
                 {
@@ -282,10 +288,11 @@ namespace LiveCameraSample
                     botClient.Send("Unknown");
                 }
             }
+            StopButton_Click(this, new RoutedEventArgs());
             //End Windana
 
-                // Count the API call. 
-                Properties.Settings.Default.FaceAPICallCount++;
+            // Count the API call. 
+            Properties.Settings.Default.FaceAPICallCount++;
             // Output. 
             return new LiveCameraResult { Faces = faces };
         }

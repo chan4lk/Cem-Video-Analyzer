@@ -3,6 +3,7 @@ using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,10 +19,11 @@ namespace AzureFaceRecognition
     // https://dev.projectoxford.ai/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237/console
     public partial class Form1 : Form
     {
+        private static string apiKey = ConfigurationManager.AppSettings["faceapikey"];
+        private static string apiURL = ConfigurationManager.AppSettings["apiURL"];
         //private readonly IFaceServiceClient faceServiceClient = new FaceServiceClient("xxxxxxxxxxxxxxxxxxxxxxxx");
-        private readonly IFaceServiceClient faceServiceClient = new FaceServiceClient("5d017c9a97c745c6a1e45c2a8edaec95", "https://southcentralus.api.cognitive.microsoft.com/face/v1.0");
-
-
+        private readonly IFaceServiceClient faceServiceClient = new FaceServiceClient(apiKey, apiURL);
+        
         string _imagePath = "";
         string _groupId   = "";
 
@@ -229,7 +231,7 @@ namespace AzureFaceRecognition
                 MessageBox.Show("Group successfully created");
             } catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.Message);
             }
         }
 

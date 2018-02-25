@@ -40,7 +40,7 @@ namespace LiveCameraSample.Bot
 
 
         public BotClient()
-        {
+        {            
             SetupVoice();
             SetupMicrophone();
             StartBotConversation();
@@ -103,7 +103,7 @@ namespace LiveCameraSample.Bot
             // for dataReco, since we already called endAudio() on it as soon as we were done
             // sending all the data.
             this.micClient.EndMicAndRecognition();
-
+            
             this.WriteResponseResult(e);
 
         }
@@ -123,6 +123,8 @@ namespace LiveCameraSample.Bot
             if (e.PhraseResponse.Results.Length == 0)
             {
                 this.WriteLine("No phrase response is available.");
+                this.voice.Speak("No phrase response is available.");
+                this.micClient.StartMicAndRecognition();
             }
             else
             {
@@ -237,8 +239,8 @@ namespace LiveCameraSample.Bot
 
         public void Reset()
         {
+            this.micClient.EndMicAndRecognition();
             this.micClient.StartMicAndRecognition();
-            this.client.Conversations.
             this.StartBotConversation();
         }
 
