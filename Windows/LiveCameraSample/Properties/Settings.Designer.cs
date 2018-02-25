@@ -202,13 +202,37 @@ namespace LiveCameraSample.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("61a895555e5c47c18e40cc08e708ebb0")]
         public string SpeechKey {
             get {
                 return ((string)(this["SpeechKey"]));
             }
             set {
                 this["SpeechKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7LOlxJ8uBWU.cwA.ZZM.JKaspFPojmeAgnOrdoRvImmndDnyF49E7_hioR5diSg")]
+        public string DirectLineSecret {
+            get {
+                return ((string)(this["DirectLineSecret"]));
+            }
+            set {
+                this["DirectLineSecret"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Visible")]
+        public string BotPanelVisibility {
+            get {
+                return ((string)(this["BotPanelVisibility"]));
+            }
+            set {
+                this["BotPanelVisibility"] = value;
             }
         }
     }

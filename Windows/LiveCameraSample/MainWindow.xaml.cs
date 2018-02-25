@@ -51,13 +51,16 @@ using System.Windows.Navigation;
 using VideoFrameAnalyzer;
 using System.Speech;
 using System.Speech.Synthesis;
+using LiveCameraSample.Bot;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace LiveCameraSample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : System.Windows.Window
+    public partial class MainWindow : System.Windows.Window, INotifyPropertyChanged
     {
         private EmotionServiceClient _emotionClient = null;
         private FaceServiceClient _faceClient = null;
@@ -73,6 +76,12 @@ namespace LiveCameraSample
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
         private DateTime _startTime;
+
+        private string userInput = string.Empty;
+
+        private BotClient botClient;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public enum AppMode
         {
@@ -171,6 +180,51 @@ namespace LiveCameraSample
 
             // Create local face detector. 
             _localFaceDetector.Load("Data/haarcascade_frontalface_alt2.xml");
+
+            setupBot();
+        }
+
+        private void setupBot()
+        {
+            botClient = new BotClient();
+            botClient.OnError += BotClient_OnError;
+            botClient.OnResponse += BotClient_OnResponse;
+            botClient.OnInit += BotClient_OnInit;
+            
+        }
+
+        private void BotClient_OnInit()
+        {
+            botClient.Send("Hi");
+        }
+
+        private void BotClient_OnResponse(string message, MessageType type)
+        {
+            switch (type)
+            {
+                case MessageType.History:
+                    this.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        HistoryText.AppendText(message + "\n");
+                    }));
+                    break;
+                case MessageType.Metadata:
+                    this.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        MetaText.AppendText(message + "\n");
+                    }));
+                    
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        
+
+            private void BotClient_OnError(object sender, EventArgs e)
+        {
+            MetaText.AppendText((e as UnhandledExceptionEventArgs).ExceptionObject.ToString());
         }
 
         /// <summary> Function which submits a frame to the Face API. </summary>
@@ -555,6 +609,21 @@ namespace LiveCameraSample
                 OpenCvSharp.Rect r = sortedClientRects[i];
                 sortedResultFaces[i].FaceRectangle = new FaceRectangle { Left = r.Left, Top = r.Top, Width = r.Width, Height = r.Height };
             }
+        }
+
+        private void SendText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.Enter)
+            {
+                botClient.Send(SendText.Text);
+                SendText.Text = "";
+                
+            }
+        }
+
+        private void ChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            BotPanel.Visibility = 1 - BotPanel.Visibility;
         }
     }
 }

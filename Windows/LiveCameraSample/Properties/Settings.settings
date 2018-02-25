@@ -48,7 +48,13 @@
       <Value Profile="(Default)">https://api.cognitive.microsoft.com/sts/v1.0/issueToken</Value>
     </Setting>
     <Setting Name="SpeechKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">61a895555e5c47c18e40cc08e708ebb0</Value>
+    </Setting>
+    <Setting Name="DirectLineSecret" Type="System.String" Scope="User">
+      <Value Profile="(Default)">7LOlxJ8uBWU.cwA.ZZM.JKaspFPojmeAgnOrdoRvImmndDnyF49E7_hioR5diSg</Value>
+    </Setting>
+    <Setting Name="BotPanelVisibility" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Visible</Value>
     </Setting>
   </Settings>
 </SettingsFile>
