@@ -128,8 +128,8 @@ namespace LiveCameraSample.Bot
         {
             if (e.PhraseResponse.Results.Length == 0)
             {
-                this.WriteLine("No phrase response is available.");
-                this.voice.Speak("No phrase response is available.");
+                this.WriteLine("Please anwser the question");
+                this.voice.Speak("Please anwser the question.");
                 this.micClient.StartMicAndRecognition();
             }
             else
@@ -254,12 +254,9 @@ namespace LiveCameraSample.Bot
             }
         }
 
-        public async void Reset()
+        public void Reset()
         {
-            SendResetActivity();
-            this.client.Dispose();
-            this.micClient.Dispose();
-            
+            SendResetActivity();                        
             this.initialize();
         }
 

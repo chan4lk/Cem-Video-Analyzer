@@ -277,6 +277,7 @@ namespace LiveCameraSample
                 botClient.UserRecognized = true;
             }
             StopButton_Click(this, new RoutedEventArgs());
+            BotClient_OnResponse("Face Api Stopped", MessageType.Metadata);
             //End Windana
 
             // Count the API call. 
