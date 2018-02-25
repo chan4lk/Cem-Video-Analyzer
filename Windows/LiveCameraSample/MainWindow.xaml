@@ -89,7 +89,7 @@
             </StackPanel>
         </Grid>
         <TextBlock Name="MessageArea" Margin="5" Grid.Row="2" VerticalAlignment="Center" />
-        <TextBox Name="SendText" Margin="5" Grid.Row="3" VerticalAlignment="Center" Height="30" PreviewKeyUp="SendText_PreviewKeyUp"  Text="{Binding Input, Mode=TwoWay}"/>
+        <TextBox Name="SendText" Margin="5" Background="AntiqueWhite" Grid.Row="3" VerticalAlignment="Center" Height="30" PreviewKeyUp="SendText_PreviewKeyUp"  Text="{Binding Input, Mode=TwoWay}"/>
 
     </Grid>
 </Window>

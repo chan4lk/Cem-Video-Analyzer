@@ -190,12 +190,13 @@ namespace LiveCameraSample
             botClient.OnError += BotClient_OnError;
             botClient.OnResponse += BotClient_OnResponse;
             botClient.OnInit += BotClient_OnInit;
-            
+            SendText.Text = "Hi";
         }
 
         private void BotClient_OnInit()
         {
             botClient.Send("Hi");
+            SendText.Text = "";
         }
 
         private void BotClient_OnResponse(string message, MessageType type)
@@ -206,12 +207,14 @@ namespace LiveCameraSample
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         HistoryText.AppendText(message + "\n");
+                        HistoryText.ScrollToEnd();
                     }));
                     break;
                 case MessageType.Metadata:
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         MetaText.AppendText(message + "\n");
+                        MetaText.ScrollToEnd();
                     }));
                     
                     break;

@@ -139,7 +139,7 @@ namespace LiveCameraSample.Bot
                     if (e.PhraseResponse.Results[i].Confidence == Confidence.High)
                     {
                         var text = e.PhraseResponse.Results[i].DisplayText.Replace(".", "");
-                        OnVoice?.Invoke(text);
+                        Send(text);                        
                     }
                 }
 
