@@ -256,7 +256,8 @@ namespace LiveCameraSample.Bot
 
         public void Reset()
         {
-            SendResetActivity();                        
+            SendResetActivity();
+            this.micClient.EndMicAndRecognition();
             this.initialize();
         }
 
