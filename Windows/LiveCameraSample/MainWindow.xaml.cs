@@ -75,7 +75,7 @@ namespace LiveCameraSample
             new ImageEncodingParam(ImwriteFlags.JpegQuality, 60)
         };
         private readonly CascadeClassifier _localFaceDetector = new CascadeClassifier();
-        private readonly string requestName = "Let's get started";
+        private readonly string requestName = "Hi, I'm";
         private bool _fuseClientRemoteResults;
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
@@ -204,7 +204,13 @@ namespace LiveCameraSample
             botClient.OnError += BotClient_OnError;
             botClient.OnResponse += BotClient_OnResponse;
             botClient.OnInit += BotClient_OnInit;
+            botClient.OnEnd += BotClient_OnEnd;
             SendText.Text = "Hi";
+        }
+
+        private void BotClient_OnEnd()
+        {
+            StopButton_Click(this, new RoutedEventArgs());
         }
 
         private void BotClient_OnInit()
@@ -271,18 +277,19 @@ namespace LiveCameraSample
                 {
                     var candidateId = identifyResult.Candidates[0].PersonId;
                     var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
-                    botClient.Send(person.Name.Replace("_", " ").Split(' ')[0]);
-                    HandController.Shake(Properties.Settings.Default.IPCamURL);
-                    SendReplyAfterShake();
-                    
+                    botClient.Send(person.Name.Replace("_", " ").Split(' ')[0]);                    
                 }
                 else
                 {
                     botClient.Send("Unknown");
                 }
-                botClient.UserRecognized = true;
+                if(!botClient.UserRecognized)
+                    StopButton_Click(this, new RoutedEventArgs());
+                HandController.Shake(Properties.Settings.Default.IPCamURL);
+                SendReplyAfterShake();
+
             }
-            StopButton_Click(this, new RoutedEventArgs());
+            //StopButton_Click(this, new RoutedEventArgs());
             BotClient_OnResponse("Face Api Stopped", MessageType.Metadata);
             //End Windana
 
@@ -310,6 +317,8 @@ namespace LiveCameraSample
 
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
+            botClient.UserRecognized = true;
+            
             botClient.Send("How do you do");
         }
 

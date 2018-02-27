@@ -38,6 +38,9 @@ namespace LiveCameraSample.Bot
         public delegate void OnInitialized();
         public event OnInitialized OnInit;
 
+        public delegate void OnConversationEnded();
+        public event OnConversationEnded OnEnd;
+
         public event EventHandler OnError;
 
         public bool UserRecognized { get; set; }
@@ -125,17 +128,24 @@ namespace LiveCameraSample.Bot
         {
             this.SetText(MessageType.Metadata, "--- OnMicrophoneStatus ---");
         }
+        private int missedResonseCount = 0;
 
         private void WriteResponseResult(SpeechResponseEventArgs e)
         {
             if (e.PhraseResponse.Results.Length == 0)
             {
                 this.WriteLine("Please anwser the question");
-                this.voice.Speak("I'm sorry. I could not hear you properly.");
+                if (missedResonseCount > 1)
+                {
+                    this.voice.Speak("I'm sorry. I could not hear you properly.");
+                }                
+                missedResonseCount++;               
+
                 this.micClient.StartMicAndRecognition();
             }
             else
             {
+                missedResonseCount = 0;
                 this.WriteLine("********* Final n-BEST Results *********");
                 for (int i = 0; i < e.PhraseResponse.Results.Length; i++)
                 {
@@ -214,7 +224,9 @@ namespace LiveCameraSample.Bot
 
         public async void Send(string input)
         {
-            this.micClient.EndMicAndRecognition();
+            //this.micClient.EndMicAndRecognition();
+
+            OnResponse?.Invoke(input, MessageType.History);
 
             if (!string.IsNullOrEmpty(input))
             {
@@ -231,12 +243,20 @@ namespace LiveCameraSample.Bot
 
         private async void SendResetActivity()
         {
-            Activity activity = new Activity
+            try
             {
-                Type = ActivityTypes.EndOfConversation
-            };
+                Activity activity = new Activity
+                {
+                    Type = ActivityTypes.EndOfConversation
+                };
 
-            await client.Conversations.PostActivityAsync(conversation.ConversationId, activity);
+                await client.Conversations.PostActivityAsync(conversation.ConversationId, activity);
+            }
+            catch (Exception)
+            {
+
+            }
+            
         }
 
         private async Task ReadBotMessagesAsync(DirectLineClient client, string conversationId)
@@ -258,9 +278,11 @@ namespace LiveCameraSample.Bot
 
                     SetText(MessageType.Metadata, JsonConvert.SerializeObject(activity));
 
-                    if (activity.Text.Contains("Please enjoy"))
+                    if (activity.Text.ToLower().Contains("please enjoy"))
                     {
+                        UserRecognized = false;
                         this.micClient.EndMicAndRecognition();
+                        OnEnd?.Invoke();
                     }
                 }
 
@@ -270,6 +292,7 @@ namespace LiveCameraSample.Bot
 
         private void SetText(MessageType type, string text)
         {
+            
             OnResponse?.Invoke(text, type);
 
             // Read Text
