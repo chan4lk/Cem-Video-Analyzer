@@ -56,5 +56,8 @@
     <Setting Name="BotPanelVisibility" Type="System.String" Scope="User">
       <Value Profile="(Default)">Visible</Value>
     </Setting>
+    <Setting Name="FaceApiGroup" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Alpha</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

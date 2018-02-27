@@ -55,6 +55,8 @@ using LiveCameraSample.Bot;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using LiveCameraSample.Controller;
+using System.Threading;
+using System.Timers;
 
 namespace LiveCameraSample
 {
@@ -73,7 +75,7 @@ namespace LiveCameraSample
             new ImageEncodingParam(ImwriteFlags.JpegQuality, 60)
         };
         private readonly CascadeClassifier _localFaceDetector = new CascadeClassifier();
-        private readonly string requestName = "Hi, I'm the CEM bot. Let's get started";
+        private readonly string requestName = "Let's get started";
         private bool _fuseClientRemoteResults;
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
@@ -223,6 +225,7 @@ namespace LiveCameraSample
                             StartButton_Click(this, new RoutedEventArgs());
                         }
                         HistoryText.AppendText(message + "\n");
+                        SendText.Focus();
                         HistoryText.ScrollToEnd();
                     }));
                     break;
@@ -230,6 +233,7 @@ namespace LiveCameraSample
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         MetaText.AppendText(message + "\n");
+                        SendText.Focus();
                         MetaText.ScrollToEnd();
                     }));
 
@@ -267,8 +271,10 @@ namespace LiveCameraSample
                 {
                     var candidateId = identifyResult.Candidates[0].PersonId;
                     var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
-                    botClient.Send(person.Name);
+                    botClient.Send(person.Name.Replace("_", " ").Split(' ')[0]);
                     HandController.Shake(Properties.Settings.Default.IPCamURL);
+                    SendReplyAfterShake();
+                    
                 }
                 else
                 {
@@ -284,6 +290,27 @@ namespace LiveCameraSample
             Properties.Settings.Default.FaceAPICallCount++;
             // Output. 
             return new LiveCameraResult { Faces = faces };
+        }
+
+        private void SendReplyAfterShake()
+        {
+            var aTimer = new System.Timers.Timer();
+            aTimer.Interval = 7000;
+
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += OnTimedEvent;
+
+            // Have the timer fire repeated events (true is the default)
+            aTimer.AutoReset = false;
+
+            // Start the timer
+            aTimer.Enabled = true;
+
+        }
+
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            botClient.Send("How do you do");
         }
 
         /// <summary> Function which submits a frame to the Emotion API. </summary>
@@ -510,7 +537,7 @@ namespace LiveCameraSample
 
             //Windana
 
-            _groupId = "mygroup";
+            _groupId = Properties.Settings.Default.FaceApiGroup;
             try
             {
                 await _faceClient.GetPersonGroupAsync(_groupId);
@@ -526,10 +553,7 @@ namespace LiveCameraSample
                 {
                     BotClient_OnResponse(ex.Message, MessageType.Metadata);
                 }
-
-
             }
-
             //End Windana
         }
 
@@ -641,6 +665,11 @@ namespace LiveCameraSample
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             botClient.Reset();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            System.Environment.Exit(0);
         }
     }
 }

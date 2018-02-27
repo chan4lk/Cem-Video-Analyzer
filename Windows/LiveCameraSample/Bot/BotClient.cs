@@ -23,6 +23,8 @@ namespace LiveCameraSample.Bot
         private SpeechSynthesizer voice;
         private MicrophoneRecognitionClient micClient;
         private SpeechRecognitionMode Mode = SpeechRecognitionMode.ShortPhrase;
+        private static string recognizeFailed = "I'm sorry, I cannot recognize you.";
+        private static string lastQuestion = string.Empty;
 
         public delegate void OnResponseRecived(string message, MessageType type);
         public event OnResponseRecived OnResponse;
@@ -36,7 +38,7 @@ namespace LiveCameraSample.Bot
         public delegate void OnInitialized();
         public event OnInitialized OnInit;
 
-        public event EventHandler OnError;        
+        public event EventHandler OnError;
 
         public bool UserRecognized { get; set; }
 
@@ -129,7 +131,7 @@ namespace LiveCameraSample.Bot
             if (e.PhraseResponse.Results.Length == 0)
             {
                 this.WriteLine("Please anwser the question");
-                this.voice.Speak("Please anwser the question.");
+                this.voice.Speak("I'm sorry. I could not hear you properly.");
                 this.micClient.StartMicAndRecognition();
             }
             else
@@ -146,6 +148,7 @@ namespace LiveCameraSample.Bot
                 }
 
                 var firstGuess = e.PhraseResponse.Results.FirstOrDefault().DisplayText.Replace(".", "");
+
                 Send(firstGuess);
                 this.WriteLine("\n");
             }
@@ -164,19 +167,34 @@ namespace LiveCameraSample.Bot
 
         private async Task StartBotConversation()
         {
-            client = new DirectLineClient(directLineSecret);
+            try
+            {
+                client = new DirectLineClient(directLineSecret);
 
-            conversation = await client.Conversations.StartConversationAsync();
+                conversation = await client.Conversations.StartConversationAsync();
 
-            new System.Threading.Thread(async () => await ReadBotMessagesAsync(client, conversation.ConversationId)).Start();
+                new System.Threading.Thread(async () =>
+                {
+                    try
+                    {
+                        await ReadBotMessagesAsync(client, conversation.ConversationId);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }).Start();
 
-            OnInit?.Invoke();
+                OnInit?.Invoke();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void SetupVoice()
         {
             voice = new SpeechSynthesizer();
-            voice.SelectVoiceByHints(VoiceGender.Female);
+            voice.SelectVoiceByHints(VoiceGender.Male);
             voice.Volume = 100;
             voice.Rate = 0;
             voice.SpeakCompleted += Voice_SpeakCompleted;
@@ -196,6 +214,8 @@ namespace LiveCameraSample.Bot
 
         public async void Send(string input)
         {
+            this.micClient.EndMicAndRecognition();
+
             if (!string.IsNullOrEmpty(input))
             {
                 Activity userMessage = new Activity
@@ -237,6 +257,11 @@ namespace LiveCameraSample.Bot
                     SetText(MessageType.History, activity.Text);
 
                     SetText(MessageType.Metadata, JsonConvert.SerializeObject(activity));
+
+                    if (activity.Text.Contains("Please enjoy"))
+                    {
+                        this.micClient.EndMicAndRecognition();
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
@@ -256,8 +281,22 @@ namespace LiveCameraSample.Bot
 
         public void Reset()
         {
-            SendResetActivity();
             this.micClient.EndMicAndRecognition();
+
+            SendResetActivity();
+
+            UserRecognized = false;
+
+            if (this.Mode == SpeechRecognitionMode.ShortPhrase)
+            {
+                this.micClient.OnResponseReceived -= this.OnMicShortPhraseResponseReceivedHandler;
+            }
+            else if (this.Mode == SpeechRecognitionMode.LongDictation)
+            {
+                this.micClient.OnResponseReceived -= this.OnMicDictationResponseReceivedHandler;
+            }
+
+            this.micClient.OnConversationError -= this.OnConversationErrorHandler;
             this.initialize();
         }
 

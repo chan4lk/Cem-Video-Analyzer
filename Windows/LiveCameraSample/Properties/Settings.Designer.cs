@@ -235,5 +235,17 @@ namespace LiveCameraSample.Properties {
                 this["BotPanelVisibility"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Alpha")]
+        public string FaceApiGroup {
+            get {
+                return ((string)(this["FaceApiGroup"]));
+            }
+            set {
+                this["FaceApiGroup"] = value;
+            }
+        }
     }
 }
