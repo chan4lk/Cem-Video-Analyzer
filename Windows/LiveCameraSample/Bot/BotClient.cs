@@ -44,6 +44,7 @@ namespace LiveCameraSample.Bot
         public event EventHandler OnError;
 
         public bool UserRecognized { get; set; }
+        private bool isStopped = false;
 
         public BotClient()
         {
@@ -52,6 +53,7 @@ namespace LiveCameraSample.Bot
 
         private void initialize()
         {
+            this.isStopped = false;
             SetupVoice();
             SetupMicrophone();
             StartBotConversation();
@@ -134,14 +136,14 @@ namespace LiveCameraSample.Bot
         {
             if (e.PhraseResponse.Results.Length == 0)
             {
-                this.WriteLine("Please anwser the question");
-                if (missedResonseCount > 1)
-                {
-                    this.voice.Speak("I'm sorry. I could not hear you properly.");
-                }                
-                missedResonseCount++;               
-
-                this.micClient.StartMicAndRecognition();
+                //this.WriteLine("Please anwser the question");
+                //if (missedResonseCount > 1)
+                //{
+                //    this.voice.Speak("I'm sorry. I could not hear you properly.");
+                //}                
+                //missedResonseCount++;               
+                Send("dummy");
+                //this.micClient.StartMicAndRecognition();
             }
             else
             {
@@ -225,19 +227,30 @@ namespace LiveCameraSample.Bot
         public async void Send(string input)
         {
             //this.micClient.EndMicAndRecognition();
-
-            OnResponse?.Invoke(input, MessageType.History);
-
-            if (!string.IsNullOrEmpty(input))
+            if (!isStopped)
             {
-                Activity userMessage = new Activity
+                try
                 {
-                    From = new ChannelAccount(fromUser),
-                    Text = input,
-                    Type = ActivityTypes.Message
-                };
+                    OnResponse?.Invoke(input, MessageType.History);
 
-                await client.Conversations.PostActivityAsync(conversation.ConversationId, userMessage);
+                    if (!string.IsNullOrEmpty(input))
+                    {
+                        Activity userMessage = new Activity
+                        {
+                            From = new ChannelAccount(fromUser),
+                            Text = input,
+                            Type = ActivityTypes.Message
+                        };
+
+                        await client.Conversations.PostActivityAsync(conversation.ConversationId, userMessage);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+               
+                
             }
         }
 
@@ -280,9 +293,9 @@ namespace LiveCameraSample.Bot
 
                     if (activity.Text.ToLower().Contains("please enjoy"))
                     {
-                        UserRecognized = false;
-                        this.micClient.EndMicAndRecognition();
-                        OnEnd?.Invoke();
+                        
+                        this.Stop();
+                        
                     }
                 }
 
@@ -298,12 +311,22 @@ namespace LiveCameraSample.Bot
             // Read Text
             if (type == MessageType.History)
             {
+                if (text.ToLower().Contains("code is"))
+                    voice.Speak("I'm sorry. I could not hear you properly.");
+                else
                 voice.SpeakAsync(text);
             }
         }
 
         public void Reset()
         {
+            this.Stop();
+            this.initialize();
+        }
+
+        internal void Stop()
+        {
+            this.isStopped = true;
             this.micClient.EndMicAndRecognition();
 
             SendResetActivity();
@@ -320,7 +343,8 @@ namespace LiveCameraSample.Bot
             }
 
             this.micClient.OnConversationError -= this.OnConversationErrorHandler;
-            this.initialize();
+
+            OnEnd?.Invoke();
         }
 
         #endregion

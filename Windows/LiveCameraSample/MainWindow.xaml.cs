@@ -80,7 +80,7 @@ namespace LiveCameraSample
         private LiveCameraResult _latestResultsToDisplay = null;
         private AppMode _mode;
         private DateTime _startTime;
-
+        private bool isCheifMode = false;
         private string userInput = string.Empty;
 
         private BotClient botClient;
@@ -195,7 +195,7 @@ namespace LiveCameraSample
             // Create local face detector. 
             _localFaceDetector.Load("Data/haarcascade_frontalface_alt2.xml");
 
-            setupBot();
+            
         }
 
         private void setupBot()
@@ -206,15 +206,19 @@ namespace LiveCameraSample
             botClient.OnInit += BotClient_OnInit;
             botClient.OnEnd += BotClient_OnEnd;
             SendText.Text = "Hi";
+
+           
         }
 
         private void BotClient_OnEnd()
         {
             StopButton_Click(this, new RoutedEventArgs());
+            isCheifMode = false;
         }
 
         private void BotClient_OnInit()
         {
+            
             botClient.Send("Hi");
             SendText.Text = "";
         }
@@ -267,27 +271,44 @@ namespace LiveCameraSample
                 FaceAttributeType.Gender, FaceAttributeType.HeadPose };
             var faces = await _faceClient.DetectAsync(jpg, returnFaceAttributes: attrs);
 
-
-            //Windana
-            var faceIds = faces.Select(face => face.FaceId).ToArray();
-            foreach (var identifyResult in await _faceClient.IdentifyAsync(_groupId, faceIds))
+            if (isCheifMode)
             {
-                //MessageBox.Show(identifyResult.Candidates.Length.ToString());
-                if (identifyResult.Candidates.Length != 0)
-                {
-                    var candidateId = identifyResult.Candidates[0].PersonId;
-                    var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
-                    botClient.Send(person.Name.Replace("_", " ").Split(' ')[0]);                    
-                }
-                else
-                {
-                    botClient.Send("Unknown");
-                }
-                if(!botClient.UserRecognized)
+                botClient.Send("missus c");
+                if (!botClient.UserRecognized)
                     StopButton_Click(this, new RoutedEventArgs());
-                HandController.Shake(Properties.Settings.Default.IPCamURL);
-                SendReplyAfterShake();
+              SendReplyBeforeShake();
+            }
+            else
+            {
 
+                //Windana
+                var faceIds = faces.Select(face => face.FaceId).ToArray();
+                foreach (var identifyResult in await _faceClient.IdentifyAsync(_groupId, faceIds))
+                {
+                    //MessageBox.Show(identifyResult.Candidates.Length.ToString());
+                    if (identifyResult.Candidates.Length != 0)
+                    {
+                        var candidateId = identifyResult.Candidates[0].PersonId;
+                        var person = await _faceClient.GetPersonAsync(_groupId, candidateId);
+                        if (person.Name.ToLower().Equals("mrs_c"))
+                        {
+                            botClient.Send(person.Name.Replace("_", " "));
+                        }
+                        else
+                        {
+                            botClient.Send(person.Name.Replace("_", " ").Split(' ')[0]);
+                        }
+                    }
+                    else
+                    {
+                        botClient.Send("Unknown");
+                    }
+                    if (!botClient.UserRecognized)
+                        StopButton_Click(this, new RoutedEventArgs());
+
+                    SendReplyBeforeShake();
+
+                }
             }
             //StopButton_Click(this, new RoutedEventArgs());
             BotClient_OnResponse("Face Api Stopped", MessageType.Metadata);
@@ -315,7 +336,29 @@ namespace LiveCameraSample
 
         }
 
-        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        private void SendReplyBeforeShake()
+        {
+            var aTimer = new System.Timers.Timer();
+            aTimer.Interval = 2000;
+
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += OnShake;
+
+            // Have the timer fire repeated events (true is the default)
+            aTimer.AutoReset = false;
+
+            // Start the timer
+            aTimer.Enabled = true;
+
+        }
+
+        private void OnShake(object sender, ElapsedEventArgs e)
+        {
+            HandController.Shake(Properties.Settings.Default.IPCamURL);
+            SendReplyAfterShake();
+        }
+
+            private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
             botClient.UserRecognized = true;
             
@@ -679,6 +722,22 @@ namespace LiveCameraSample
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             System.Environment.Exit(0);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            isCheifMode = true;
+            setupBot();
+        }
+
+        private void initButton_Click(object sender, RoutedEventArgs e)
+        {
+            setupBot();
+        }
+
+        private void stopChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            botClient.Stop();
         }
     }
 }
